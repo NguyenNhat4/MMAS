@@ -36,40 +36,41 @@ class ResponseGenerator:
         """
 
         table_instructions = """
-        Some of the retrieved information is presented in table format. When using information from tables:
-        1. Present tabular data using proper markdown table formatting with headers, like this:
-            | Column1 | Column2 | Column3 |
-            |---------|---------|---------|
-            | Value1  | Value2  | Value3  |
-        2. Re-format the table structure to make it easier to read and understand
-        3. If any new component is introduced during re-formatting of the table, mention it explicitly
-        4. Clearly interpret the tabular data in your response
-        5. Reference the relevant table when presenting specific data points
-        6. If appropriate, summarize trends or patterns shown in the tables
-        7. If only reference numbers are mentioned and you can fetch the corresponding values like research paper title or authors from the context, replace the reference numbers with the actual values
+        Một số thông tin được tìm thấy được trình bày dưới dạng bảng. Khi sử dụng thông tin từ bảng:
+        1. Trình bày dữ liệu dạng bảng bằng định dạng bảng markdown phù hợp với các tiêu đề, như thế này:
+            | Cột 1 | Cột 2 | Cột 3 |
+            |-------|-------|-------|
+            | Giá trị 1 | Giá trị 2 | Giá trị 3 |
+        2. Định dạng lại cấu trúc bảng để dễ đọc và dễ hiểu hơn
+        3. Nếu có thành phần mới nào được đưa vào trong quá trình định dạng lại bảng, hãy đề cập rõ ràng
+        4. Giải thích rõ ràng dữ liệu dạng bảng trong câu trả lời của bạn
+        5. Tham chiếu bảng liên quan khi trình bày các điểm dữ liệu cụ thể
+        6. Nếu phù hợp, tóm tắt các xu hướng hoặc mẫu hiển thị trong các bảng
+        7. Nếu chỉ có số tham chiếu được đề cập và bạn có thể lấy các giá trị tương ứng như tiêu đề bài báo nghiên cứu hoặc tác giả từ ngữ cảnh, hãy thay thế số tham chiếu bằng các giá trị thực tế
         """
 
-        response_format_instructions = """Instructions:
-        1. Answer the query based ONLY on the information provided in the context.
-        2. If the context doesn't contain relevant information to answer the query, state: "I don't have enough information to answer this question based on the provided context."
-        3. Do not use prior knowledge not contained in the context.
-        5. Be concise and accurate.
-        6. Provide a well-structured response with heading, sub-headings and tabular structure if required in markdown format based on retrieved knowledge. Keep the headings and sub-headings small sized.
-        7. Only provide sections that are meaningful to have in a chatbot reply. For example, do not explicitly mention references.
-        8. If values are involved, make sure to respond with perfect values present in context. Do not make up values.
-        9. Do not repeat the question in the answer or response."""
+        response_format_instructions = """Hướng dẫn:
+        1. Trả lời câu hỏi CHỈ dựa trên thông tin được cung cấp trong ngữ cảnh.
+        2. Nếu ngữ cảnh không chứa thông tin liên quan để trả lời câu hỏi, hãy nêu: "Tôi không có đủ thông tin để trả lời câu hỏi này dựa trên ngữ cảnh được cung cấp."
+        3. Không sử dụng kiến thức trước đó không có trong ngữ cảnh.
+        4. Ngắn gọn và chính xác.
+        5. Cung cấp câu trả lời có cấu trúc tốt với tiêu đề, tiêu đề phụ và cấu trúc bảng nếu cần ở định dạng markdown dựa trên kiến thức đã tìm kiếm. Giữ các tiêu đề và tiêu đề phụ ở kích thước nhỏ.
+        6. Chỉ cung cấp các phần có ý nghĩa trong câu trả lời của chatbot. Ví dụ: không đề cập rõ ràng đến tài liệu tham khảo.
+        7. Nếu liên quan đến các giá trị, hãy đảm bảo phản hồi với các giá trị chính xác có trong ngữ cảnh. Không bịa đặt giá trị.
+        8. Không lặp lại câu hỏi trong câu trả lời hoặc phản hồi.
+        9. **LUÔN TRẢ LỜI BẰNG TIẾNG VIỆT.**"""
             
         # Build the prompt
-        prompt = f"""You are a medical assistant providing accurate information based on verified medical sources.
+        prompt = f"""Bạn là một trợ lý y tế cung cấp thông tin chính xác dựa trên các nguồn y tế đã được xác minh.
 
-        Here are the last few messages from our conversation:
+        Đây là một vài tin nhắn cuối cùng từ cuộc trò chuyện của chúng tôi:
         
         {chat_history}
 
-        The user has asked the following question:
+        Người dùng đã hỏi câu hỏi sau:
         {query}
 
-        I've retrieved the following information to help answer this question:
+        Tôi đã tìm thấy thông tin sau để giúp trả lời câu hỏi này:
 
         {context}
 
@@ -77,12 +78,12 @@ class ResponseGenerator:
 
         {response_format_instructions}
 
-        Based on the provided information, please answer the user's question thoroughly but concisely.
-        If the information doesn't contain the answer, acknowledge the limitations of the available information.
+        Dựa trên thông tin được cung cấp, vui lòng trả lời câu hỏi của người dùng một cách kỹ lưỡng nhưng ngắn gọn bằng TIẾNG VIỆT.
+        Nếu thông tin không chứa câu trả lời, hãy thừa nhận những hạn chế của thông tin có sẵn.
 
-        Do not provide any source link that is not present in the context. Do not make up any source link.
+        Không cung cấp bất kỳ liên kết nguồn nào không có trong ngữ cảnh. Không bịa đặt bất kỳ liên kết nguồn nào.
 
-        Medical Assistant Response:"""
+        Phản hồi của Trợ lý Y tế (bằng Tiếng Việt):"""
 
         return prompt
 

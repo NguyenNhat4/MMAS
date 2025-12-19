@@ -260,6 +260,9 @@ def create_agent_graph():
 
         You are an AI-powered Medical Conversation Assistant. Your goal is to facilitate smooth and informative conversations with users, handling both casual and medical-related queries. You must respond naturally while ensuring medical accuracy and clarity.
 
+        ### IMPORTANT: LANGUAGE REQUIREMENT
+        - **ALWAYS RESPOND IN VIETNAMESE**. Regardless of the input language, your output must be in Vietnamese.
+
         ### Role & Capabilities
         - Engage in **general conversation** while maintaining professionalism.
         - Answer **medical questions** using verified knowledge.
@@ -294,18 +297,18 @@ def create_agent_graph():
         ### Response Format:
         - Maintain a **conversational yet professional tone**.
         - Use **bullet points or numbered lists** for clarity when needed.
-        - If pulling from external sources (RAG/Web Search), mention **where the information is from** (e.g., "According to Mayo Clinic...").
+        - If pulling from external sources (RAG/Web Search), mention **where the information is from** (e.g., "Theo thông tin từ Mayo Clinic...").
         - If a user asks for a diagnosis, remind them to **seek medical consultation**.
 
         ### Example User Queries & Responses:
 
         **User:** "Hey, how's your day going?"
-        **You:** "I'm here and ready to help! How can I assist you today?"
+        **You:** "Tôi ở đây và sẵn sàng giúp đỡ! Tôi có thể giúp gì cho bạn hôm nay?"
 
         **User:** "I have a headache and fever. What should I do?"
-        **You:** "I'm not a doctor, but headaches and fever can have various causes, from infections to dehydration. If your symptoms persist, you should see a medical professional."
+        **You:** "Tôi không phải là bác sĩ, nhưng đau đầu và sốt có thể do nhiều nguyên nhân, từ nhiễm trùng đến mất nước. Nếu các triệu chứng vẫn tiếp tục, bạn nên gặp chuyên gia y tế."
 
-        Conversational LLM Response:"""
+        Conversational LLM Response (in Vietnamese):"""
 
         # print("Conversation Prompt:", conversation_prompt)
 
@@ -452,7 +455,7 @@ def create_agent_graph():
 
         print(f"Selected agent: BRAIN_TUMOR_AGENT")
 
-        response = AIMessage(content="This would be handled by the brain tumor agent, analyzing the MRI image.")
+        response = AIMessage(content="Việc này sẽ được xử lý bởi tác nhân khối u não, phân tích hình ảnh MRI.")
 
         return {
             **state,
@@ -473,11 +476,11 @@ def create_agent_graph():
         predicted_class = AgentConfig.image_analyzer.classify_chest_xray(image_path)
 
         if predicted_class == "covid19":
-            response = AIMessage(content="The analysis of the uploaded chest X-ray image indicates a **POSITIVE** result for **COVID-19**.")
+            response = AIMessage(content="Kết quả phân tích hình ảnh X-quang phổi cho thấy **DƯƠNG TÍNH** với **COVID-19**.")
         elif predicted_class == "normal":
-            response = AIMessage(content="The analysis of the uploaded chest X-ray image indicates a **NEGATIVE** result for **COVID-19**, i.e., **NORMAL**.")
+            response = AIMessage(content="Kết quả phân tích hình ảnh X-quang phổi cho thấy **ÂM TÍNH** với **COVID-19**, tức là **BÌNH THƯỜNG**.")
         else:
-            response = AIMessage(content="The uploaded image is not clear enough to make a diagnosis / the image is not a medical image.")
+            response = AIMessage(content="Hình ảnh tải lên không đủ rõ để chẩn đoán / hình ảnh không phải là hình ảnh y tế.")
 
         # response = AIMessage(content="This would be handled by the chest X-ray agent, analyzing the image.")
 
@@ -500,9 +503,9 @@ def create_agent_graph():
         predicted_mask = AgentConfig.image_analyzer.segment_skin_lesion(image_path)
 
         if predicted_mask:
-            response = AIMessage(content="Following is the analyzed **segmented** output of the uploaded skin lesion image:")
+            response = AIMessage(content="Dưới đây là kết quả phân tích hình ảnh tổn thương da đã được **phân đoạn**:")
         else:
-            response = AIMessage(content="The uploaded image is not clear enough to make a diagnosis / the image is not a medical image.")
+            response = AIMessage(content="Hình ảnh tải lên không đủ rõ để chẩn đoán / hình ảnh không phải là hình ảnh y tế.")
 
         # response = AIMessage(content="This would be handled by the skin lesion agent, analyzing the skin image.")
 
@@ -524,7 +527,7 @@ def create_agent_graph():
         print(f"Selected agent: HUMAN_VALIDATION")
 
         # Append validation request to the existing output
-        validation_prompt = f"{state['output'].content}\n\n**Human Validation Required:**\n- If you're a healthcare professional: Please validate the output. Select **Yes** or **No**. If No, provide comments.\n- If you're a patient: Simply click Yes to confirm."
+        validation_prompt = f"{state['output'].content}\n\n**Yêu cầu xác nhận từ con người:**\n- Nếu bạn là chuyên gia y tế: Vui lòng xác thực kết quả. Chọn **Yes** hoặc **No**. Nếu chọn No, vui lòng cung cấp nhận xét.\n- Nếu bạn là bệnh nhân: Chỉ cần nhấp Yes để xác nhận."
 
         # Create an AI message with the validation prompt
         validation_message = AIMessage(content=validation_prompt)
@@ -548,7 +551,7 @@ def create_agent_graph():
         output_text = output if isinstance(output, str) else output.content
         
         # If the last message was a human validation message
-        if "Human Validation Required" in output_text:
+        if "Yêu cầu xác nhận từ con người" in output_text or "Human Validation Required" in output_text:
             # Check if the current input is a human validation response
             validation_input = ""
             if isinstance(current_input, str):
@@ -563,7 +566,7 @@ def create_agent_graph():
                 
                 # If validation is 'No', modify the output
                 if validation_input.lower().startswith('no'):
-                    fallback_message = AIMessage(content="The previous medical analysis requires further review. A healthcare professional has flagged potential inaccuracies.")
+                    fallback_message = AIMessage(content="Kết quả phân tích y tế trước đó cần được xem xét thêm. Một chuyên gia y tế đã gắn cờ các điểm không chính xác tiềm ẩn.")
                     return {
                         **state,
                         "messages": [validation_response, fallback_message],
